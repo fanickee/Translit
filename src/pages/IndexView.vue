@@ -146,7 +146,7 @@ const formatObject = reactive([
     func: (text: string) => {
       const r1 = /\n+/g;
       const r2 = /(?<=\p{L}) *\n *(?=\p{L})/gu
-      return text.replace(r1, "\n").replace(r2, "").replace(/[ ]+\n(?=\p{L})/gu, " ")
+      return text.replace(r1, "\n").replace(r2, "").replace(/(?<![.。])[ ]*\n[ ]*(?=\p{L})/gu, " ")
     },
     isOpen: false
   },

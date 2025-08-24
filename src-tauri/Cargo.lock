@@ -4380,7 +4380,7 @@ dependencies = [
 
 [[package]]
 name = "translit"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "async-trait",
  "once_cell",

@@ -1,6 +1,6 @@
 [package]
 name = "translit"
-version = "0.1.1"
+version = "0.1.2"
 description = "Translation App"
 authors = ["fanickee"]
 edition = "2021"

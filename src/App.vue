@@ -190,7 +190,7 @@ onMounted(async () => {
       </KeepAlive>
     </transition>
   </router-view>
-  <Toaster/>
+  <Toaster :close-button="true" position="bottom-left"/>
 </div>
 </template>
 
