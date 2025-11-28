@@ -8,8 +8,8 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU5MEQzOEU5N0Q2QURBNDMKUldSRDJtcDk2VGdOV2NwSzJad2RYMmwvL1lwTXlsNGlIcURKZEdDNmpNY1p4MEF0b3A1VEQ4NU8K",
       "endpoints": [
-        "https://gh-proxy.com/github.com/user/repo/releases/latest/download/latest.json",
-        "https://github.com/user/repo/releases/latest/download/latest.json"
+        "https://gh-proxy.com/github.com/fanickee/Translit/releases/latest/download/latest.json",
+        "https://github.com/fanickee/Translit/releases/latest/download/latest.json"
       ]
     }
   },
