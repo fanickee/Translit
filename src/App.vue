@@ -46,7 +46,7 @@ function toggleTheme() {
 import { TrayIcon, TrayIconOptions } from '@tauri-apps/api/tray';
 import { Menu, MenuItem, PredefinedMenuItem, CheckMenuItem } from '@tauri-apps/api/menu';
 import { defaultWindowIcon } from '@tauri-apps/api/app';
-import { version } from '@/../package.json';
+import { getVersion } from '@tauri-apps/api/app';
 
 async function createTray() {
   const hotkeyItem = []
@@ -59,7 +59,7 @@ async function createTray() {
       },
     }))
   }
-
+  const version = await getVersion();
   const items = await Promise.all([
     ...hotkeyItem,
     PredefinedMenuItem.new({ item: 'Separator' }),
@@ -113,8 +113,26 @@ async function closeWindow() {
 
 import { check, Update } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
+import { Progress } from '@/components/ui/progress'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  // AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+
+const openUpdate = ref(false);
 let update: Update | null = null;
+const showProgress = ref(false);
+const progress = ref(0);
 async function checkUpdate() {
+  if (showProgress.value) {
+    return;
+  }
   try {
     update = await check();
     if (!update) {
@@ -135,28 +153,37 @@ async function checkUpdate() {
   );
   let downloaded = 0;
   let contentLength = 0;
-  // alternatively we could also call update.download() and update.install() separately
-  await update.downloadAndInstall((event) => {
-    if (update == null)
-      return
-    switch (event.event) {
-      case 'Started':
-        toast.info(`开始下载: ${update.version}`);
-        contentLength = event.data.contentLength ?? 0;
-        console.log(`started downloading ${event.data.contentLength} bytes`);
-        break;
-      case 'Progress':
-        downloaded += event.data.chunkLength;
-        console.log(`downloaded ${downloaded} from ${contentLength}`);
-        break;
-      case 'Finished':
-        console.log('download finished');
-        break;
-    }
-  });
-  toast.info(`更新完成，立即重启`);
-  console.log('update installed');
-  await relaunch();
+  showProgress.value = true;
+  try {
+    // alternatively we could also call update.download() and update.install() separately
+    await update.downloadAndInstall((event) => {
+      if (update == null)
+        return
+      switch (event.event) {
+        case 'Started':
+          toast.info(`开始下载: ${update.version}`);
+          progress.value = 0;
+          contentLength = event.data.contentLength ?? 0;
+          console.log(`started downloading ${event.data.contentLength} bytes`);
+          break;
+        case 'Progress':
+          downloaded += event.data.chunkLength;
+          progress.value = downloaded * 100 / contentLength;
+          // console.log(`downloaded ${downloaded} from ${contentLength}`);
+          break;
+        case 'Finished':
+          progress.value = 100;
+          console.log('download finished');
+          break;
+      }
+    });
+    console.log('update installed');
+    openUpdate.value = true;
+  } catch (e) {
+    toast.error(`下载失败: ${e}`)
+    console.log(e)
+  }
+  showProgress.value = false;
 }
 
 onMounted(async () => {
@@ -244,7 +271,19 @@ onMounted(async () => {
         </KeepAlive>
       </transition>
     </router-view>
+    <Progress :model-value="progress" v-if="showProgress"></Progress>
     <Toaster :close-button="true" position="bottom-left" />
+    <AlertDialog :open="openUpdate">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>更新完成是否重启?</AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel @click="openUpdate = false">否</AlertDialogCancel>
+          <AlertDialogAction @click="relaunch();openUpdate = false">是</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>
 

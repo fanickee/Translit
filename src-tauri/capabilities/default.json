@@ -26,6 +26,8 @@
     "global-shortcut:allow-is-registered",
     "clipboard-manager:allow-read-text",
     "clipboard-manager:allow-write-text",
+    "process:allow-restart",
+    "process:default",
     "store:default",
     {
       "identifier": "shell:allow-execute",
