@@ -33,6 +33,25 @@ interface SettingStore {
   autoTrans: boolean
 }
 
+const defaultSetting: SettingStore = {
+  defaultApi: "",
+  hotKeyList: [
+    {
+      use: "Select",
+      isOpen: false,
+      desc: "获取选中文本",
+      keys: "ALT+X"
+    },
+    {
+      use: "Clip",
+      isOpen: false,
+      desc: "获取粘贴文本",
+      keys: "ALT+C"
+    },
+  ],
+  autoTrans: false
+}
+
 export const useSettingsStore = defineStore('settings', ()=>{
   const settings = reactive<SettingStore>({
     hotKeyList: [],
@@ -99,41 +118,7 @@ export const useSettingsStore = defineStore('settings', ()=>{
       if (!store) {
         throw Error("can not load store")
       }
-      // await store.set("settings", {
-      //   defaultApi: "",
-      //   hotKeyList: [
-      //     {
-      //       use: "Select",
-      //       isOpen: false,
-      //       desc: "获取选中文本",
-      //       keys: "ALT+X"
-      //     },
-      //     {
-      //       use: "Clip",
-      //       isOpen: false,
-      //       desc: "获取粘贴文本",
-      //       keys: "ALT+C"
-      //     },
-      //   ]
-      // })
-      let tmp = await store.get<SettingStore>("settings") ?? {
-        defaultApi: "",
-        hotKeyList: [
-          {
-            use: "Select",
-            isOpen: false,
-            desc: "获取选中文本",
-            keys: "ALT+X"
-          },
-          {
-            use: "Clip",
-            isOpen: false,
-            desc: "获取粘贴文本",
-            keys: "ALT+C"
-          },
-        ],
-        autoTrans: false
-      }
+      let tmp = await store.get<SettingStore>("settings") ?? defaultSetting;
 
       Object.assign(settings, tmp)
       watch(settings, async (n, _)=>{

@@ -5,7 +5,7 @@ import Separator from '@/components/ui/separator/Separator.vue';
 import { toast } from 'vue-sonner'
 import Button from '@/components/ui/button/Button.vue';
 import { invoke } from '@tauri-apps/api/core';
-import { computed, reactive, ref, useTemplateRef } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { onMounted } from 'vue'
 import {
   Select,
@@ -27,6 +27,7 @@ import { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { Command } from '@tauri-apps/plugin-shell';
 import { Copy, LoaderPinwheel } from 'lucide-vue-next';
+import { useMediaQuery } from '@vueuse/core';
 
 const settingsStore = useSettingsStore()
 const finalText = ref("");
@@ -161,7 +162,7 @@ const formatObject = reactive([
 ])
 
 let originText = ref("")
-const originTextarea = useTemplateRef<HTMLTextAreaElement>("originTextarea");
+
 const _finalText = computed(()=>{
   let tmp = originText.value
   formatObject.forEach((v)=>{
@@ -179,6 +180,38 @@ const _finalText = computed(()=>{
 function formatText(text: string|number) {
   text = text.toString()
   originText.value = text
+}
+
+const isLargeScreen = useMediaQuery('(min-width: 768px)'); // 对应 md 断点
+interface TextareaExposed {
+  textarea: HTMLTextAreaElement | null;
+}
+const originTextarea = ref<TextareaExposed | null>(null);
+
+watch(isLargeScreen, (newVal) => {
+  if (newVal) {
+    clearTextareaHeight();
+  }
+});
+
+onMounted(() => {
+  if (isLargeScreen.value) {
+    clearTextareaHeight();
+  }
+});
+
+function clearTextareaHeight() {
+  const componentInstance = originTextarea.value;
+  if (!componentInstance) return;
+
+  const el = componentInstance.textarea;
+
+  if (el) {
+    if (el.style.height) {
+      el.style.height = '';
+      console.log('Cleared residual height style on textarea.');
+    }
+  }
 }
 
 onMounted(()=>{

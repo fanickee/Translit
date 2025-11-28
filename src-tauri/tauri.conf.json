@@ -4,7 +4,15 @@
   "mainBinaryName": "translit",
   "version": "0.1.2",
   "identifier": "com.translit.appx",
-  "plugins": {},
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU5MEQzOEU5N0Q2QURBNDMKUldSRDJtcDk2VGdOV2NwSzJad2RYMmwvL1lwTXlsNGlIcURKZEdDNmpNY1p4MEF0b3A1VEQ4NU8K",
+      "endpoints": [
+        "https://gh-proxy.com/github.com/user/repo/releases/latest/download/latest.json",
+        "https://github.com/user/repo/releases/latest/download/latest.json"
+      ]
+    }
+  },
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
@@ -31,6 +39,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

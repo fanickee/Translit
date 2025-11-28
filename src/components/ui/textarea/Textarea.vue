@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue'
+import { ref } from 'vue';
 import { useVModel } from '@vueuse/core'
 import { cn } from '@/lib/utils'
 
@@ -8,6 +9,12 @@ const props = defineProps<{
   defaultValue?: string | number
   modelValue?: string | number
 }>()
+
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
+
+defineExpose({
+  textarea: textareaRef, // 父组件可以通过 originTextarea.value.textarea 访问到 DOM
+});
 
 const emits = defineEmits<{
   (e: 'update:modelValue', payload: string | number): void
@@ -21,6 +28,7 @@ const modelValue = useVModel(props, 'modelValue', emits, {
 
 <template>
   <textarea
+    ref="textareaRef"
     v-model="modelValue"
     data-slot="textarea"
     :class="cn('border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)"
